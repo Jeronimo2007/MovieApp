@@ -21,6 +21,29 @@ class ModelUser():
 
 
     @classmethod
+    def register(self,db, user):
+        try:
+            cursor = db.connection.cursor()
+
+            sql = """INSERT INTO users (username, password, fullname)
+            VALUES (%s, %s, %s)"""
+
+            values = (user[0], user[1], user[2])
+
+            cursor.execute(sql, values)
+
+            db.connection.commit()  
+
+        except Exception as ex:
+
+            db.connection.rollback()  
+            raise ex
+        
+        finally:
+            cursor.close()
+            
+
+    @classmethod
     def get_by_id(self,db,id):
         try:
             cursor = db.connection.cursor()

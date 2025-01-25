@@ -22,8 +22,10 @@ def load_user(id):
     return ModelUser.get_by_id(db,id)
 
 
+
 @app.route('/login', methods = ['GET', 'POST'])
 def login():
+
     if request.method == 'POST':
         #print(request.form['username'])
         #print(request.form['password'])
@@ -50,6 +52,24 @@ def logout():
     return redirect(url_for('login'))
     
 
+@app.route('/register', methods = ['GET','POST'])
+def signup():
+    if request.method == 'POST':
+        try:
+            user = [
+                request.form['username'],
+                request.form['password'],
+                request.form['fullname']
+            ]
+            ModelUser.register(db, user)
+            return redirect(url_for('login'))
+        except Exception as e:
+            return f"Error al registrar usuario: {e}", 500
+    else:
+        return render_template('auth/register.html')
+    
+
+
 @app.route('/protected')
 @login_required
 def protected():
@@ -72,7 +92,6 @@ def index():
 
 if __name__ == '__main__':
     app.config.from_object(config['development'])
-    csrf.init_app(app)
     app.register_error_handler(401, status_401)
     app.register_error_handler(404, status_404)
     app.run()
