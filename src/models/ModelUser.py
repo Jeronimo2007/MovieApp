@@ -1,6 +1,10 @@
 from .entities.User import User
+import os
+import pandas as pd
 
 class ModelUser():
+
+    movies = pd.read_csv(os.path.join(os.path.dirname(os.path.dirname(__file__)), "movies.csv"))
     
     @classmethod
     def login(self,db,user):
@@ -58,3 +62,10 @@ class ModelUser():
                 return None
         except Exception as ex:
             raise Exception(ex)
+        
+    @classmethod
+    def filter_by_genres(cls,selected_genres):
+        filtered_movies = cls.movies[cls.movies['genres'].apply(
+            lambda x: all(genre.strip() in x for genre in selected_genres)
+        )]
+        return filtered_movies[['title', 'genres']].head(1000).to_dict(orient='records')

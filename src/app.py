@@ -2,6 +2,7 @@ from flask import Flask, render_template, render_template, request,redirect,url_
 from flask_mysqldb import MySQL 
 from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager, login_user, logout_user, login_required
+from flask import Flask, request, jsonify
 
 from config import config
 
@@ -85,6 +86,24 @@ def status_404(error):
 def home():
     return render_template('home.html')
     
+
+
+@app.route('/filter', methods=['POST'])
+def filter_movies():
+    data = request.json
+    selected_genres = data.get('genres', [])  # Géneros seleccionados por el usuario
+
+    if not selected_genres:
+        return jsonify({'error': 'No genres selected'}), 400
+
+    # Filtrar películas
+    try:
+        recommendations = ModelUser.filter_by_genres(selected_genres)
+        return jsonify({'recommendations': recommendations})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
 
 @app.route('/')
 def index():

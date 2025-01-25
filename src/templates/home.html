@@ -1,15 +1,52 @@
-{% extends './base.html' %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filtrar Películas</title>
+</head>
+<body>
+    <h1>Select your favorites genres</h1>
+    <form id="genreForm">
+        <label><input type="checkbox" name="genres" value="Action"> Action</label><br>
+        <label><input type="checkbox" name="genres" value="Adventure"> Adventure</label><br>
+        <label><input type="checkbox" name="genres" value="Comedy"> Comedy</label><br>
+        <label><input type="checkbox" name="genres" value="Drama"> Drama</label><br>
+        <label><input type="checkbox" name="genres" value="Horror"> Horror</label><br>
+        <button type="button" onclick="getRecommendations()">Search movies</button>
+    </form>
 
-{% block title %}Home{% endblock %}
+    <h2>Recomended movies:</h2>
+    <ul id="recommendations"></ul>
 
+    <script>
+        async function getRecommendations() {
+            const selectedGenres = Array.from(document.querySelectorAll('input[name="genres"]:checked'))
+                .map(checkbox => checkbox.value);
 
-{% block customCSS %}
+            const response = await fetch('/filter', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ genres: selectedGenres }),
+            });
 
+            const data = await response.json();
 
-{% endblock %}
-
-
-{% block body %}
-<h1>Bienvenido, {{current_user.fullname}}</h1>
-<a class="btn btn-secondary"  href="{{ url_for('logout') }}">Logout</a>
-{% endblock %}
+            // Mostrar las recomendaciones
+            const recommendationsList = document.getElementById('recommendations');
+            recommendationsList.innerHTML = '';
+            if (data.recommendations) {
+                data.recommendations.forEach(movie => {
+                    const li = document.createElement('li');
+                    li.textContent = `${movie.title} (${movie.genres})`;
+                    recommendationsList.appendChild(li);
+                });
+            } else {
+                recommendationsList.textContent = data.error || 'No se encontraron resultados.';
+            }
+        }
+    </script>
+</body>
+</html>
