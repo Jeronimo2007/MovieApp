@@ -1,0 +1,18 @@
+html,
+body {
+  height: 100%;
+  text-align: center;
+  align-items: center;
+}
+
+.m_box{
+    background-color: rgb(76, 129, 228);
+    width: 500px;
+    margin-left: 25%;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.button{
+    border-radius: 5px;
+}
