@@ -105,11 +105,6 @@ def filter_movies():
 def index():
     return redirect(url_for('login'))
 
-def handler(event, context):
-    from flask_lambda import FlaskLambda
-    return app.handle(event, context)
-
-
 if __name__ == '__main__':
     app.config.from_object(config['development'])
     app.debug = True
