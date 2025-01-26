@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 from flask_wtf.csrf import CSRFProtect
 from flask_login import LoginManager, login_user, logout_user, login_required
-
+import os
 from config import get_supabase_client, config
 
 
@@ -110,4 +110,4 @@ if __name__ == '__main__':
     app.debug = True
     app.register_error_handler(401, status_401)
     app.register_error_handler(404, status_404)
-    app.run()
+    app.run(debug=True,host="0.0.0.0", port=os.getenv("PORT", default=5000))
